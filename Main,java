@@ -1,0 +1,79 @@
+package me.Dutchwilco.Main;
+
+import java.util.HashMap;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
+public class Main extends JavaPlugin {
+	
+	private static Main main;
+
+	@Override
+	public void onEnable() {
+		Bukkit.getPluginManager().registerEvents(new ChairListener(), this);
+		
+		getLogger().info("ChairsPlus enabled");
+		getLogger().info("----------------------------");
+		getLogger().info("Made by: Dutchwilco");
+		getLogger().info("Version 1.8");
+		getLogger().info("----------------------------");
+		
+        int pluginId = 9247;
+        MetricsLite metrics = new MetricsLite(this, pluginId);
+		
+		Main.main = this;
+	}
+	
+	private static HashMap<UUID, SitData> sitting = new HashMap<>();
+	
+	public static void sit(Player player, Block block) {
+		if (sitting.containsKey(player.getUniqueId())) {
+			if (sitting.get(player.getUniqueId()).chair.equals(block)) {
+				return;
+			}
+			
+			unsit(player);
+		}
+		
+		sitting.put(player.getUniqueId(), new SitData(main, player, block));
+	}
+	
+	public static void unsit(Player player) {
+		sitting.get(player.getUniqueId()).unsit();
+		sitting.remove(player.getUniqueId());
+	}
+	
+	public static void unsit(Block chair) {
+		UUID remove = null;
+		for(UUID uuid : sitting.keySet()) {
+			SitData data = sitting.get(uuid);
+			
+			if (data.chair.equals(chair)) {
+				data.unsit();
+			}
+			remove = uuid;
+			break;
+		}
+		if (remove != null) {
+			sitting.remove(remove);
+		}
+	}
+	
+	public static boolean isOccupied(Block block) {
+		for (SitData data : sitting.values()) {
+			if (data.chair.equals(block)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean isSitting(Player player) {
+		return sitting.containsKey(player.getUniqueId());
+	}
+	
+}
