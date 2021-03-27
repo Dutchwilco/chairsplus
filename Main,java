@@ -19,7 +19,7 @@ public class Main extends JavaPlugin {
 		getLogger().info("ChairsPlus enabled");
 		getLogger().info("----------------------------");
 		getLogger().info("Made by: Dutchwilco");
-		getLogger().info("Version 1.8");
+		getLogger().info("Version 2.0");
 		getLogger().info("----------------------------");
 		
         int pluginId = 9247;
